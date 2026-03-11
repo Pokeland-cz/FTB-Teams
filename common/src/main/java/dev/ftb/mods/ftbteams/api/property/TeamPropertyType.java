@@ -47,14 +47,18 @@ public class TeamPropertyType<T> {
 		ResourceLocation typeId = buf.readResourceLocation();
 		ResourceLocation propId = buf.readResourceLocation();
 		boolean playerEditable = buf.readBoolean();
+		boolean hidden = buf.readBoolean();
 		TeamProperty<?> prop = MAP.get(typeId).deserializer.apply(propId, buf);
-		return playerEditable ? prop : prop.notPlayerEditable();
+		if (!playerEditable) prop = prop.notPlayerEditable();
+		if (hidden) prop = prop.hidden();
+		return prop;
 	}
 
 	public static void write(RegistryFriendlyByteBuf buf, TeamProperty<?> prop) {
 		buf.writeResourceLocation(prop.getType().id);
 		buf.writeResourceLocation(prop.id);
 		buf.writeBoolean(prop.isPlayerEditable());
+		buf.writeBoolean(prop.isHidden());
 		prop.write(buf);
 	}
 

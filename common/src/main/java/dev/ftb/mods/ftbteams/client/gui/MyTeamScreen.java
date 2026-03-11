@@ -387,11 +387,13 @@ public class MyTeamScreen extends BaseScreen implements NordColors {
 
 				Map<String,ConfigGroup> subGroups = new HashMap<>();
 				MyTeamScreen.this.properties.forEach((key, value) -> {
-					String groupName = key.getId().getNamespace();
-					ConfigGroup cfg = subGroups.computeIfAbsent(groupName, k -> config.getOrCreateSubgroup(groupName));
-					var val = key.config(cfg, value);
-					if (val != null && !key.isPlayerEditable()) {
-						val.setCanEdit(false);
+					if (!key.isHidden()) {
+						String groupName = key.getId().getNamespace();
+						ConfigGroup cfg = subGroups.computeIfAbsent(groupName, k -> config.getOrCreateSubgroup(groupName));
+						var val = key.config(cfg, value);
+						if (val != null && !key.isPlayerEditable()) {
+							val.setCanEdit(false);
+						}
 					}
 				});
 
