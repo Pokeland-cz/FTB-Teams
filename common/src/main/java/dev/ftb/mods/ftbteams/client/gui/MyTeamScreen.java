@@ -19,6 +19,7 @@ import dev.ftb.mods.ftbteams.api.client.KnownClientPlayer;
 import dev.ftb.mods.ftbteams.api.property.TeamProperties;
 import dev.ftb.mods.ftbteams.api.property.TeamPropertyCollection;
 import dev.ftb.mods.ftbteams.client.FTBTeamsClient;
+import dev.ftb.mods.ftbteams.config.ServerConfig;
 import dev.ftb.mods.ftbteams.data.ClientTeamManagerImpl;
 import dev.ftb.mods.ftbteams.data.PlayerPermissions;
 import dev.ftb.mods.ftbteams.data.TeamPropertyCollectionImpl;
@@ -42,6 +43,7 @@ public class MyTeamScreen extends BaseScreen implements NordColors {
 	private final UUID teamID;
 	private Button settingsButton;
 	private Button infoButton;
+	private Button livesButton;
 	private Button missingDataButton;
 	private Button colorButton;
 	private Button toggleChatButton;
@@ -99,6 +101,10 @@ public class MyTeamScreen extends BaseScreen implements NordColors {
 			}
 		});
 
+		if (ServerConfig.limitedLives().isPresent() && getManager().selfTeam().isPartyTeam()) {
+			add(livesButton = new LivesButton());
+		}
+
 		if (ClientTeamManagerImpl.getInstance().self() == null) {
 			add(missingDataButton = new SimpleButton(this, Component.empty(), Icons.CANCEL, (w, mb) -> {}) {
 				@Override
@@ -147,7 +153,8 @@ public class MyTeamScreen extends BaseScreen implements NordColors {
 
 		colorButton.setPosAndSize(5, 5, 12, 12);
 		infoButton.setPosAndSize(20, 3, 16, 16);
-		if (missingDataButton != null) missingDataButton.setPosAndSize(40, 3, 16, 16);
+		if (livesButton != null) livesButton.setPosAndSize(40, 3, 16, 16);
+		if (missingDataButton != null) missingDataButton.setPosAndSize(60, 3, 16, 16);
 
 		settingsButton.setPosAndSize(width - 19, 3, 16, 16);
 		inviteButton.setPosAndSize(width - 37, 3, 16, 16);
@@ -404,6 +411,27 @@ public class MyTeamScreen extends BaseScreen implements NordColors {
 		@Override
 		public void draw(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
 			drawIcon(graphics, theme, x, y, w, h);
+		}
+	}
+
+	private class LivesButton extends SimpleButton {
+		public LivesButton() {
+			super(MyTeamScreen.this, Component.empty(), Icons.HEART, (btn, mb) -> {});
+		}
+
+		@Override
+		public void addMouseOverText(TooltipList list) {
+			FTBTeamsClient.addLivesIconTooltip().forEach(list::add);
+		}
+
+		@Override
+		public void drawIcon(GuiGraphics graphics, Theme theme, int x, int y, int w, int h) {
+			super.drawIcon(graphics, theme, x, y, w, h);
+
+			graphics.pose().pushPose();
+			graphics.pose().translate(x, y, 0);
+			FTBTeamsClient.renderLivesIconOverlay(graphics, theme.getFont(), w);
+			graphics.pose().popPose();
 		}
 	}
 }

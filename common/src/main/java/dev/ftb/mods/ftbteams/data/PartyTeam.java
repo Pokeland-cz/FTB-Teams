@@ -9,6 +9,8 @@ import dev.ftb.mods.ftbteams.api.TeamRank;
 import dev.ftb.mods.ftbteams.api.event.PlayerTransferredTeamOwnershipEvent;
 import dev.ftb.mods.ftbteams.api.event.TeamAllyEvent;
 import dev.ftb.mods.ftbteams.api.event.TeamEvent;
+import dev.ftb.mods.ftbteams.api.property.TeamProperties;
+import dev.ftb.mods.ftbteams.config.ServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
@@ -72,6 +74,10 @@ public class PartyTeam extends AbstractTeam {
 	public int join(@Nullable ServerPlayer player, GameProfile playerProfile) throws CommandSyntaxException {
 		UUID id = playerProfile.getId();
 
+		if (ServerConfig.limitedLives().isPresent() && getProperty(TeamProperties.LIVES_REMAINING) <= 0) {
+			throw TeamArgument.OUT_OF_LIVES.create();
+		}
+
 		Team oldTeam = manager.getTeamForPlayerID(id)
 				.orElseThrow(() -> TeamArgument.TEAM_NOT_FOUND.create(id));
 
@@ -96,6 +102,10 @@ public class PartyTeam extends AbstractTeam {
 	public int invite(ServerPlayer inviter, Collection<GameProfile> profiles) throws CommandSyntaxException {
 		if (!FTBTUtils.canPlayerUseCommand(inviter, "ftbteams.party.invite")) {
 			throw TeamArgument.NO_PERMISSION.create();
+		}
+
+		if (ServerConfig.limitedLives().isPresent() && getProperty(TeamProperties.LIVES_REMAINING) <= 0) {
+			throw TeamArgument.OUT_OF_LIVES.create();
 		}
 
 		for (GameProfile profile : profiles) {
@@ -391,5 +401,24 @@ public class PartyTeam extends AbstractTeam {
 				.withStyle(ChatFormatting.GOLD), false);
 
 		return Command.SINGLE_SUCCESS;
+	}
+
+	public void kickPlayerForcibly(ServerPlayer player) throws CommandSyntaxException {
+		CommandSourceStack stack = player.getServer().createCommandSourceStack();
+
+		if (getMembers().size() == 1) {
+			forceDisband(stack);
+		} else if (getMembers().size() > 1) {  // should always be the case
+			if (getRankForPlayer(player.getUUID()).isOwner()) {
+				// if player being kicked is the owner, first transfer ownership to next highest ranked player
+				List<GameProfile> members = getMembers().stream()
+						.sorted((o1, o2) -> Integer.compare(getRankForPlayer(o1).getPower(), getRankForPlayer(o2).getPower()))
+						.map(id -> new GameProfile(id, ""))
+						.toList();
+				transferOwnership(stack, members.getFirst());
+			}
+
+			kick(stack, List.of(new GameProfile(player.getUUID(), "")));
+		}
 	}
 }
