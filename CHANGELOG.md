@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * If the party owner dies, a random member is promoted to owner (officers have priority)
   * Parties with no lives remaining cannot invite new members
 
+### Changed
+* Updated `pt_br` translation (thanks @PrincessStelllar)
+* Added `id_id` translation (thanks @evan-william)
+
 ## [2101.1.9]
 
 ### Added
