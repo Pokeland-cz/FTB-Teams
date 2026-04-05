@@ -25,5 +25,10 @@ public class TeamProperties {
             = new IntProperty(FTBTeamsAPI.rl("max_msg_history_size"), 1000);
     public static final StringSetProperty TEAM_STAGES
             = (StringSetProperty) new StringSetProperty(FTBTeamsAPI.rl("team_stages"), new HashSet<>())
+            .hidden()
+            .notPlayerEditable();
+    public static final IntProperty LIVES_REMAINING
+            = (IntProperty) new IntProperty(FTBTeamsAPI.rl("lives_remaining"), 0, 0, Integer.MAX_VALUE)
+            .hidden()
             .notPlayerEditable();
 }

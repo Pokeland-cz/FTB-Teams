@@ -23,12 +23,14 @@ public abstract class TeamProperty<T> {
 	private final Supplier<T> defaultValue;
 	private boolean playerEditable;
 	private boolean shouldSyncToAll;
+	private boolean hidden;
 
 	protected TeamProperty(ResourceLocation id, Supplier<T> defaultValue) {
 		this.id = id;
 		this.defaultValue = defaultValue;
 
 		playerEditable = true;
+		hidden = false;
 		shouldSyncToAll = false;
 	}
 
@@ -75,6 +77,18 @@ public abstract class TeamProperty<T> {
 	 */
 	public TeamProperty<T> notPlayerEditable() {
 		playerEditable = false;
+		return this;
+	}
+
+	/**
+	 * {@return if the property should be hidden from the properties editor GUI}
+	 */
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public TeamProperty<T> hidden() {
+		hidden = true;
 		return this;
 	}
 
