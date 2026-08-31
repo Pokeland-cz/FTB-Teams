@@ -73,6 +73,9 @@ public class DoubleProperty extends TeamProperty<Double> {
 			return Optional.of(Mth.clamp(tag.asDouble().orElse(minValue), minValue, maxValue));
 		}
 
+		return Optional.empty();
+	}
+
 	@Override
 	public Double readValue(RegistryFriendlyByteBuf buf) {
 		return buf.readDouble();

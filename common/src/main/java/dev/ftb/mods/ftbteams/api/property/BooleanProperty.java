@@ -65,6 +65,12 @@ public class BooleanProperty extends TeamProperty<Boolean> {
 			if (tag.asByte().orElse((byte) 0) == 1) {
 				return TRUE;
 			}
+			
+			return FALSE;
+		}
+
+		return Optional.empty();
+	}
 
 	@Override
 	public void writeValue(RegistryFriendlyByteBuf buf, Boolean value) {

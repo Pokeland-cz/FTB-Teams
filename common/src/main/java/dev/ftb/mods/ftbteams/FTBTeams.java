@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class FTBTeams {
 	public static final Logger LOGGER = LogManager.getLogger(FTBTeamsAPI.MOD_NAME);
@@ -55,7 +56,7 @@ public class FTBTeams {
 
 	private void serverStarted(MinecraftServer server) {
 		NBTEditResponseHandlers.INSTANCE.registerHandler("ftbteams:team", (serverPlayer, info, data) -> {
-			TeamManagerImpl.INSTANCE.getTeamByID(info.getUUID("id")).ifPresent(team -> {
+			TeamManagerImpl.INSTANCE.getTeamByID(UUID.fromString(String.valueOf(info.getString("id")))).ifPresent(team -> {
 				if (team instanceof AbstractTeam abstractTeam) {
 					abstractTeam.deserializeNBT(data, server.registryAccess());
 					abstractTeam.markDirty();

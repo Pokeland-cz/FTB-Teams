@@ -69,8 +69,8 @@ public class StringMapProperty<T> extends TeamProperty<Map<String,T>> {
     public Optional<Map<String, T>> fromNBT(Tag tag) {
         if (tag instanceof CompoundTag c) {
             Map<String,T> res = new HashMap<>();
-            c.getAllKeys().forEach(k -> {
-                res.put(k, fromString.apply(c.getString(k)));
+            c.keySet().forEach(k -> {
+                res.put(k, fromString.apply(String.valueOf(c.getString(k))));
             });
             return Optional.of(res);
         } else {

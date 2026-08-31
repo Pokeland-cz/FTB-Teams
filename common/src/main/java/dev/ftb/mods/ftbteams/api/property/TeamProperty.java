@@ -171,7 +171,7 @@ public abstract class TeamProperty<T> {
 	 * @return the value that has been read
 	 */
 	public Optional<T> fromNBT(Tag tag) {
-		return fromString(tag.getAsString());
+		return fromString(tag.asString().orElse(""));
 	}
 
 	/**
@@ -207,16 +207,6 @@ public abstract class TeamProperty<T> {
 		return id.toString();
 	}
 
-	public void config(ConfigGroup config, TeamPropertyValue<T> value) {
-	}
-
-	public Tag toNBT(T value) {
-		return StringTag.valueOf(toString(value));
-	}
-
-	public Optional<T> fromNBT(Tag tag) {
-		return fromString(tag.asString().orElseThrow());
-	}
 
 	@Deprecated(forRemoval = true)
 	public TeamPropertyValue<T> createDefaultValue() {

@@ -413,9 +413,9 @@ public class FTBTeamsCommands {
 	private static int doTeamEdit(CommandContext<CommandSourceStack> ctx, ServerPlayer editor, Team team) {
 		if (team instanceof AbstractTeam abstractTeam) {
 			CompoundTag info = Util.make(new CompoundTag(), t -> {
-				t.putString("title", Component.Serializer.toJson(abstractTeam.getColoredName(), editor.registryAccess()));
+				t.putString("title", abstractTeam.getColoredName().getString());
 				t.putString("type", "ftbteams:team");
-				t.putUUID("id", team.getTeamId());
+				t.putString("id", team.getTeamId().toString());
 				t.putString("team_type", abstractTeam.getType().getSerializedName());
 				t.put("text", FTBLibraryCommands.InfoBuilder.create(ctx)
 						.add("Team Type", Component.translatable(team.getTypeTranslationKey()))

@@ -64,7 +64,7 @@ public class StringSetProperty extends TeamProperty<Set<String>> {
     @Override
     public Optional<Set<String>> fromNBT(Tag tag) {
         return tag instanceof ListTag l ?
-                Optional.of(l.stream().map(Tag::getAsString).collect(Collectors.toSet())) :
+                Optional.of(l.stream().map(t -> t.asString().orElse("")).collect(Collectors.toSet())) :
                 Optional.empty();
     }
 
